@@ -217,6 +217,7 @@ h1 {
 .layer-body {
   padding: 14px;
   overflow: hidden;
+  max-height: 2000px;
   transition: max-height 0.35s ease, padding 0.35s ease;
 }
 
@@ -349,4 +350,100 @@ h1 {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3a3a7a;
+}
+
+/* ===== Responsive / Mobile ===== */
+
+/* Tablet: shrink the preview window a bit */
+@media (max-width: 900px) {
+  body {
+    padding: 16px;
+  }
+
+  .layout {
+    gap: 20px;
+  }
+
+  .preview-window,
+  .layer-img {
+    width: 360px;
+    height: 360px;
+  }
+
+  .active-selections {
+    width: 360px;
+  }
+}
+
+/* Mobile: stack preview above layers */
+@media (max-width: 600px) {
+  body {
+    padding: 12px 10px;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  /* Stack vertically: preview on top, layers below */
+  .layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  /* Preview panel: full width, not sticky */
+  .preview-panel {
+    position: static;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+  }
+
+  /* Scale preview window to fit the screen */
+  .preview-window,
+  .layer-img {
+    width: min(100vw - 20px, 455px);
+    height: min(100vw - 20px, 455px);
+  }
+
+  .active-selections {
+    width: 100%;
+    max-width: 455px;
+  }
+
+  /* Export/Import buttons: full width row */
+  .preview-actions {
+    width: 100%;
+    max-width: 455px;
+  }
+
+  .preview-actions button {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+
+  /* Layers panel: full width */
+  .layers-panel {
+    width: 100%;
+    gap: 8px;
+  }
+
+  /* Slightly smaller thumbnails on mobile */
+  .layer-grid {
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+  }
+
+  /* Always show tile labels on mobile (no hover) */
+  .option-tile .tile-label {
+    opacity: 1;
+  }
+
+  /* Disable scale-on-hover (causes layout jank on touch) */
+  .option-tile:hover {
+    transform: none;
+  }
 }

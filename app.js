@@ -71,7 +71,7 @@ function renderLayerPanels() {
     const files = layerFiles[key];
 
     const section = document.createElement('div');
-    section.className = 'layer-section';
+    section.className = 'layer-section collapsed';
     section.id = `section-${key}`;
 
     // Header
