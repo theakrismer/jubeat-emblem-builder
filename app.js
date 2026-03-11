@@ -308,10 +308,56 @@ function applyConfig(data) {
   renderPreviewSelections();
 }
 
+// ─── Save as PNG ─────────────────────────────────────────────────────────────
+
+async function saveAsPNG() {
+  const SIZE = 455;
+  const canvas = document.createElement('canvas');
+  canvas.width = SIZE;
+  canvas.height = SIZE;
+  const ctx = canvas.getContext('2d');
+
+  // Draw each visible layer in order onto the canvas
+  for (let i = 1; i <= NUM_LAYERS; i++) {
+    const key = `layer${i}`;
+    if (!state[key]) continue;
+
+    await new Promise((resolve, reject) => {
+      const img = new Image();
+      // crossOrigin needed when served from a different origin (e.g. GitHub Pages)
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, SIZE, SIZE);
+        resolve();
+      };
+      img.onerror = () => {
+        console.warn(`Could not load layer ${i} for export: ${state[key]}`);
+        resolve(); // skip broken images rather than aborting
+      };
+      // Bust cache to avoid cross-origin taint on cached non-CORS responses
+      img.src = state[key] + '?_=' + Date.now();
+    });
+  }
+
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      alert('Failed to generate PNG. Make sure at least one layer is selected.');
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'emblem.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
 // ─── Bind Buttons ────────────────────────────────────────────────────────────
 
 function bindActions() {
   document.getElementById('exportBtn').addEventListener('click', exportJSON);
+  document.getElementById('saveImgBtn').addEventListener('click', saveAsPNG);
 
   const importBtn = document.getElementById('importBtn');
   const importFile = document.getElementById('importFile');
